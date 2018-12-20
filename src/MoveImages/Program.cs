@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using MoveImages.Util;
 
@@ -10,7 +12,6 @@ namespace MoveImages
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             var result = CommandLine.Parser.Default.ParseArguments<Options>(args)
                 .WithParsed<Options>(opts => RunOptionsAndReturnExitCode(opts))
                 .WithNotParsed<Options>((errs) => HandleParseError(errs));
@@ -22,12 +23,14 @@ namespace MoveImages
                 throw new InvalidOperationException($"The source folder '{opts.Source}' does not exists");
             if (!Directory.Exists(opts.Destination))
                 throw new InvalidOperationException($"The destination root folder '{opts.Destination}' does not exists");
+            // MoveFilesBack(opts);
+            // return;
 
             foreach (var filename in Directory.EnumerateFiles(opts.Source))
             {
                 var file = new FileInfo(filename);
-                var yearFolder = EnsureFolderExists(opts.Destination, file.CreationTime.Year.ToString());
-                var dayFolder = EnsureFolderExists(yearFolder, $"{file.CreationTime:yyyy-MM-dd}");
+                var yearFolder = EnsureFolderExists(opts.Destination, file.LastWriteTime.Year.ToString());
+                var dayFolder = EnsureFolderExists(yearFolder, $"{file.LastWriteTime:yyyy-MM-dd}");
                 var destinationFileName = Path.Combine(dayFolder, file.Name);
                 Console.WriteLine($"Moving {file.FullName} to {destinationFileName}");
                 file.MoveTo(destinationFileName);
@@ -55,6 +58,22 @@ namespace MoveImages
             {
                 foreach (var err in errs)
                     Console.WriteLine(err.ToString());
+            }
+        }
+
+        private static void MoveFilesBack(Options opts)
+        {
+            foreach (var dir in Directory.EnumerateDirectories(@"C:\Users\jense\OneDrive\Família\Imagens\2018\"))
+            {
+                var dirInfo = new DirectoryInfo(dir);
+                if (dirInfo.Name.Length != 10 || !dirInfo.Name.StartsWith("2018-"))
+                    continue;
+                foreach (var fileName in Directory.EnumerateFiles(dir))
+                {
+                    var fileInfo = new FileInfo(fileName);
+                    var sourceFile = Path.Combine(opts.Source, fileInfo.Name);
+                    fileInfo.MoveTo(sourceFile);
+                }
             }
         }
     }
