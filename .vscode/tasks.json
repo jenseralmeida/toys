@@ -14,6 +14,24 @@
                 "${workspaceFolder}/src/MoveImages/MoveImages.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish", "${workspaceFolder}/src/MoveImages/MoveImages.csproj",
+                "-c", "Release",
+                "-o", "${workspaceFolder}/src/MoveImages/bin/publish",
+                "--self-contained", "true",
+                "-p:RuntimeIdentifier=win-x64",
+                "-p:PublishSingleFile=true",
+                "-p:PublishTrimmed=true",
+                "-p:IncludeNativeLibrariesForSelfExtract=true"
+            ],
+            "problemMatcher": "$msCompile"
         }
     ]
 }
+
+// -c Release -o publish -p:PublishReadyToRun=true -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true

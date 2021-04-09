@@ -23,6 +23,12 @@ static void RunOptionsAndReturnExitCode(Options opts)
         var yearFolder = EnsureFolderExists(opts.Destination, file.LastWriteTime.Year.ToString());
         var dayFolder = EnsureFolderExists(yearFolder, $"{file.LastWriteTime:yyyy-MM-dd}");
         var destinationFileName = Path.Combine(dayFolder, file.Name);
+        if (File.Exists(destinationFileName))
+        {
+            using var colorChanging = new ChangeConsoleColor(ConsoleColor.White, ConsoleColor.DarkYellow);
+            Console.WriteLine($"The '{destinationFileName}' file copy was skipped as there was already a file with the same name.");
+            continue;
+        }
         Console.WriteLine($"Moving {file.FullName} to {destinationFileName}");
         file.MoveTo(destinationFileName);
     }
@@ -51,7 +57,7 @@ static void HandleParseError(IEnumerable<Error> errs)
             Console.WriteLine(err.ToString());
     }
 }
-
+/* 
 static void MoveFilesBack(Options opts)
 {
     foreach (var dir in Directory.EnumerateDirectories(@"C:\Users\jense\OneDrive\Família\Imagens\2018\"))
@@ -67,13 +73,13 @@ static void MoveFilesBack(Options opts)
         }
     }
 }
-
+ */
 public record Options
 {
     [Option(
         's',
         "source",
-        Default = @"C:\Users\jense\OneDrive\Imagens\Imagens da Câmera",
+        Required = true,
         HelpText = "Source folder to move images from"
     )]
     public string Source { get; set; }
@@ -81,7 +87,7 @@ public record Options
     [Option(
         'd',
         "destination",
-        Default = @"C:\Users\jense\OneDrive\Família\Imagens",
+        Required = true,
         HelpText = "Destination folder to move images to. A folder will be created for each year and year-month-day of the images."
     )]
     public string Destination { get; set; }

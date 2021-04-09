@@ -9,12 +9,15 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/MoveImages/bin/Debug/netcoreapp2.2/MoveImages.dll",
-            "args": [],
+            "program": "${workspaceFolder}/src/MoveImages/bin/Debug/net5.0/MoveImages.exe",
+            "args": [
+                "-s", "C:\\Users\\jense\\OneDrive\\Imagens\\Galeria Samsung\\DCIM\\AR Doodle",
+                "-d", "C:\\Users\\jense\\OneDrive\\Família\\Imagens\\"
+            ],
             "cwd": "${workspaceFolder}/src/MoveImages",
             "console": "internalConsole",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
         },
         {
             "name": ".NET Core Attach",
